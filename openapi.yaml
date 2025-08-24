@@ -2,14 +2,16 @@ openapi: 3.0.0
 info:
   title: Iris API
   description: SWAGER for IRIS | Чат-Менеджер
-  version: 1.0.0
+  version: 1.0.2
 servers:
-  - url: https://iris-tg.ru/api/{bot_id}_{token}/v100
+  - url: https://iris-tg.ru/api/{bot_id}_{token}/v{version}
     variables:
       bot_id:
         default: "BotId"
       token:
         default: "ApiToken"
+      version:
+        default: "100"
 paths:
   /pocket/balance:
     get:
