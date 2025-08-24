@@ -1,15 +1,15 @@
 openapi: 3.0.0
 info:
   title: Iris API
-  description: Неофициальная документация API для работы с ирисками и ирис-голд в Iris | Чат-Менеджере Telegram
+  description: SWAGER for IRIS | Чат-Менеджер
   version: 1.0.0
 servers:
   - url: https://iris-tg.ru/api/{bot_id}_{token}/v100
     variables:
       bot_id:
-        default: "your_bot_id"
+        default: "BotId"
       token:
-        default: "your_iris_token"
+        default: "ApiToken"
 paths:
   /pocket/balance:
     get:
