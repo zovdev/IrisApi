@@ -1,0 +1,324 @@
+openapi: 3.0.0
+info:
+  title: Iris API
+  description: Неофициальная документация API для работы с ирисками и ирис-голд в Iris | Чат-Менеджере Telegram
+  version: 1.0.0
+servers:
+  - url: https://iris-tg.ru/api/{bot_id}_{token}/v100
+    variables:
+      bot_id:
+        default: "your_bot_id"
+      token:
+        default: "your_iris_token"
+paths:
+  /pocket/balance:
+    get:
+      summary: Получение баланса пользователя
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  gold:
+                    type: integer
+                    example: 0
+                  sweets:
+                    type: number
+                    format: float
+                    example: 0.0
+                  donate_score:
+                    type: integer
+                    example: 0
+
+  /pocket/sweets/give:
+    get:
+      summary: Перевод ирисок пользователю
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: sweets
+          in: query
+          required: true
+          schema:
+            type: number
+            format: float
+        - name: comment
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: without_donate_score
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Успешный перевод
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    example: true
+
+  /pocket/gold/give:
+    get:
+      summary: Перевод ирис-голд пользователю
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: gold
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: comment
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: without_donate_score
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Успешный перевод
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    example: true
+
+  /pocket/sweets/history:
+    get:
+      summary: История операций с ирисками
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    date:
+                      type: integer
+                    amount:
+                      type: number
+                    balance:
+                      type: number
+                    to_user_id:
+                      type: integer
+                    id:
+                      type: integer
+                    type:
+                      type: string
+                      enum: [take, give]
+                    info:
+                      type: object
+
+  /pocket/gold/history:
+    get:
+      summary: История операций с ирис-голд
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    date:
+                      type: integer
+                    amount:
+                      type: number
+                    balance:
+                      type: number
+                    to_user_id:
+                      type: integer
+                    id:
+                      type: integer
+                    type:
+                      type: string
+                      enum: [take, give]
+                    info:
+                      type: object
+
+  /pocket/enable:
+    get:
+      summary: Включение видимости мешка
+      responses:
+        '200':
+          description: Успешное выполнение
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    example: true
+
+  /pocket/disable:
+    get:
+      summary: Отключение видимости мешка
+      responses:
+        '200':
+          description: Успешное выполнение
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    example: true
+
+  /pocket/allow_all:
+    get:
+      summary: Разрешение переводов всем пользователям
+      responses:
+        '200':
+          description: Успешное выполнение
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    example: true
+
+  /pocket/deny_all:
+    get:
+      summary: Запрет переводов всем пользователям
+      responses:
+        '200':
+          description: Успешное выполнение
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    example: true
+
+  /pocket/deny_user:
+    get:
+      summary: Запрет переводов конкретному пользователю
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешное выполнение
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    example: true
+
+  /pocket/allow_user:
+    get:
+      summary: Разрешение переводов конкретному пользователю
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешное выполнение
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    example: true
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+            description:
+              type: string
+
+responses:
+  BadRequest:
+    description: Неверный запрос
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Error'
+  Forbidden:
+    description: Доступ запрещен
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Error'
+  NotFound:
+    description: Пользователь не найден
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Error'
+  Conflict:
+    description: Конфликт условий
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Error'
+  InternalError:
+    description: Внутренняя ошибка сервера
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Error'
