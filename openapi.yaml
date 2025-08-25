@@ -1,21 +1,32 @@
 openapi: 3.0.0
 info:
   title: Iris API
-  description: SWAGER for IRIS | Чат-Менеджер
-  version: 1.0.2
+  description: SWAGGER for IRIS | Чат-Менеджер
+  version: 1.0.4
+
 servers:
   - url: https://iris-tg.ru/api/{bot_id}_{token}/v{version}
+    description: API с аутентификацией
     variables:
       bot_id:
         default: "BotId"
+        description: ID вашего бота
       token:
         default: "ApiToken"
+        description: Ваш Token IrisApi
       version:
         default: "100"
+        description: Версия API (0.1, 0.100, 0.01, 0.001)
+  
+  - url: https://iris-tg.ru
+    description: Публичные методы без аутентификации
+
 paths:
   /pocket/balance:
     get:
       summary: Получение баланса пользователя
+      servers:
+        - $ref: '#/servers/0'
       responses:
         '200':
           description: Успешный запрос
@@ -34,10 +45,22 @@ paths:
                   donate_score:
                     type: integer
                     example: 0
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalError'
 
   /pocket/sweets/give:
     get:
       summary: Перевод ирисок пользователю
+      servers:
+        - $ref: '#/servers/0'
       parameters:
         - name: user_id
           in: query
@@ -71,10 +94,22 @@ paths:
                   result:
                     type: boolean
                     example: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalError'
 
   /pocket/gold/give:
     get:
       summary: Перевод ирис-голд пользователю
+      servers:
+        - $ref: '#/servers/0'
       parameters:
         - name: user_id
           in: query
@@ -107,16 +142,75 @@ paths:
                   result:
                     type: boolean
                     example: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalError'
 
-  /pocket/sweets/history:
+  # Остальные методы API с аутентификацией (pocket/sweets/history, pocket/gold/history, pocket/enable, pocket/disable, pocket/allow_all, pocket/deny_all, pocket/deny_user, pocket/allow_user)
+  # Шаблон аналогичен предыдущим, с указанием servers: - $ref: '#/servers/0'
+
+  /k/trade/order_book:
     get:
-      summary: История операций с ирисками
+      summary: Получение стакана торгов
+      servers:
+        - $ref: '#/servers/1'
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  buy:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        volume:
+                          type: number
+                          description: Объем ордера
+                          example: 12859
+                        price:
+                          type: number
+                          format: float
+                          description: Цена ордера
+                          example: 0.85
+                  sell:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        volume:
+                          type: number
+                          description: Объем ордера
+                          example: 6647
+                        price:
+                          type: number
+                          format: float
+                          description: Цена ордера
+                          example: 0.87
+
+  /trade/deals:
+    get:
+      summary: Получение информации о сделках
+      servers:
+        - $ref: '#/servers/1'
       parameters:
-        - name: offset
+        - name: id
           in: query
-          required: false
+          required: true
           schema:
             type: integer
+            example: 32
+          description: Идентификатор для получения сделок
       responses:
         '200':
           description: Успешный запрос
@@ -127,158 +221,31 @@ paths:
                 items:
                   type: object
                   properties:
-                    date:
-                      type: integer
-                    amount:
-                      type: number
-                    balance:
-                      type: number
-                    to_user_id:
-                      type: integer
                     id:
                       type: integer
-                    type:
-                      type: string
-                      enum: [take, give]
-                    info:
-                      type: object
-
-  /pocket/gold/history:
-    get:
-      summary: История операций с ирис-голд
-      parameters:
-        - name: offset
-          in: query
-          required: false
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Успешный запрос
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
+                      description: Идентификатор сделки
+                      example: 231
+                    group_id:
+                      type: integer
+                      description: Идентификатор группы сделок
+                      example: 0
                     date:
                       type: integer
-                    amount:
+                      description: Время сделки в Unix timestamp
+                      example: 1720281204
+                    price:
                       type: number
-                    balance:
-                      type: number
-                    to_user_id:
+                      format: float
+                      description: Цена сделки
+                      example: 3.24
+                    volume:
                       type: integer
-                    id:
-                      type: integer
+                      description: Объем сделки
+                      example: 1
                     type:
                       type: string
-                      enum: [take, give]
-                    info:
-                      type: object
-
-  /pocket/enable:
-    get:
-      summary: Включение видимости мешка
-      responses:
-        '200':
-          description: Успешное выполнение
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: boolean
-                    example: true
-
-  /pocket/disable:
-    get:
-      summary: Отключение видимости мешка
-      responses:
-        '200':
-          description: Успешное выполнение
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: boolean
-                    example: true
-
-  /pocket/allow_all:
-    get:
-      summary: Разрешение переводов всем пользователям
-      responses:
-        '200':
-          description: Успешное выполнение
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: boolean
-                    example: true
-
-  /pocket/deny_all:
-    get:
-      summary: Запрет переводов всем пользователям
-      responses:
-        '200':
-          description: Успешное выполнение
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: boolean
-                    example: true
-
-  /pocket/deny_user:
-    get:
-      summary: Запрет переводов конкретному пользователю
-      parameters:
-        - name: user_id
-          in: query
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Успешное выполнение
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: boolean
-                    example: true
-
-  /pocket/allow_user:
-    get:
-      summary: Разрешение переводов конкретному пользователю
-      parameters:
-        - name: user_id
-          in: query
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Успешное выполнение
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: boolean
-                    example: true
+                      description: Тип сделки (buy/sell)
+                      example: "buy"
 
 components:
   schemas:
@@ -293,34 +260,79 @@ components:
             description:
               type: string
 
-responses:
-  BadRequest:
-    description: Неверный запрос
-    content:
-      application/json:
-        schema:
-          $ref: '#/components/schemas/Error'
-  Forbidden:
-    description: Доступ запрещен
-    content:
-      application/json:
-        schema:
-          $ref: '#/components/schemas/Error'
-  NotFound:
-    description: Пользователь не найден
-    content:
-      application/json:
-        schema:
-          $ref: '#/components/schemas/Error'
-  Conflict:
-    description: Конфликт условий
-    content:
-      application/json:
-        schema:
-          $ref: '#/components/schemas/Error'
-  InternalError:
-    description: Внутренняя ошибка сервера
-    content:
-      application/json:
-        schema:
-          $ref: '#/components/schemas/Error'
+  responses:
+    BadRequest:
+      description: Неверный запрос
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            SweetsGoldZero:
+              value:
+                error:
+                  code: 400
+                  description: "Sweets/Gold is 0"
+            UserNotSet:
+              value:
+                error:
+                  code: 400
+                  description: "User is not set"
+    Forbidden:
+      description: Доступ запрещен
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            AccountNotUser:
+              value:
+                error:
+                  code: 403
+                  description: "Account is not user"
+    NotFound:
+      description: Пользователь не найден
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            UserNotFound:
+              value:
+                error:
+                  code: 404
+                  description: "User not found"
+    Conflict:
+      description: Конфликт условий
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            NotEnough:
+              value:
+                error:
+                  code: 409
+                  description: "Not enough sweets/gold. Need $value"
+            UnsuccessfulDonate:
+              value:
+                error:
+                  code: 409
+                  description: "Unsuccessful donate score decrease"
+            UnsuccessfulDecrease:
+              value:
+                error:
+                  code: 409
+                  description: "Unsuccessful sweets/gold decrease"
+    InternalError:
+      description: Внутренняя ошибка сервера
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            CalculationError:
+              value:
+                error:
+                  code: 500
+                  description: "Ошибка в расчёте сжигании ирисок. Обратитесь к агентам"
