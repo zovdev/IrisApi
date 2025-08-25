@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Iris API
   description: SWAGGER for IRIS | Чат-Менеджер
-  version: 1.0.4
+  version: 1.0.5
 
 servers:
   - url: https://iris-tg.ru/api/{bot_id}_{token}/v{version}
@@ -13,7 +13,7 @@ servers:
         description: ID вашего бота
       token:
         default: "ApiToken"
-        description: Ваш Token IrisApi
+        description: Ваш Iris-Token
       version:
         default: "100"
         description: Версия API (0.1, 0.100, 0.01, 0.001)
@@ -153,8 +153,287 @@ paths:
         '500':
           $ref: '#/components/responses/InternalError'
 
-  # Остальные методы API с аутентификацией (pocket/sweets/history, pocket/gold/history, pocket/enable, pocket/disable, pocket/allow_all, pocket/deny_all, pocket/deny_user, pocket/allow_user)
-  # Шаблон аналогичен предыдущим, с указанием servers: - $ref: '#/servers/0'
+  /pocket/sweets/history:
+    get:
+      summary: История операций с ирисками
+      servers:
+        - $ref: '#/servers/0'
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    date:
+                      type: integer
+                      description: Unix время в миллисекундах
+                    amount:
+                      type: number
+                      description: Количество ирисок
+                    balance:
+                      type: number
+                      description: Баланс после операции
+                    to_user_id:
+                      type: integer
+                      description: ID получателя/отправителя
+                    id:
+                      type: integer
+                      description: ID операции
+                    type:
+                      type: string
+                      enum: [take, give]
+                      description: Тип операции (получение/передача)
+                    info:
+                      type: object
+                      description: Дополнительная информация о операции
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /pocket/gold/history:
+    get:
+      summary: История операций с ирис-голд
+      servers:
+        - $ref: '#/servers/0'
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    date:
+                      type: integer
+                      description: Unix время в миллисекундах
+                    amount:
+                      type: number
+                      description: Количество голд
+                    balance:
+                      type: number
+                      description: Баланс после операции
+                    to_user_id:
+                      type: integer
+                      description: ID получателя/отправителя
+                    id:
+                      type: integer
+                      description: ID операции
+                    type:
+                      type: string
+                      enum: [take, give]
+                      description: Тип операции (получение/передача)
+                    info:
+                      type: object
+                      description: Дополнительная информация о операции
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /pocket/enable:
+    get:
+      summary: Включение видимости мешка
+      servers:
+        - $ref: '#/servers/0'
+      responses:
+        '200':
+          description: Успешное выполнение
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    example: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /pocket/disable:
+    get:
+      summary: Отключение видимости мешка
+      servers:
+        - $ref: '#/servers/0'
+      responses:
+        '200':
+          description: Успешное выполнение
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    example: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /pocket/allow_all:
+    get:
+      summary: Разрешение переводов всем пользователям
+      servers:
+        - $ref: '#/servers/0'
+      responses:
+        '200':
+          description: Успешное выполнение
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    example: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /pocket/deny_all:
+    get:
+      summary: Запрет переводов всем пользователям
+      servers:
+        - $ref: '#/servers/0'
+      responses:
+        '200':
+          description: Успешное выполнение
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    example: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /pocket/deny_user:
+    get:
+      summary: Запрет переводов конкретному пользователю
+      servers:
+        - $ref: '#/servers/0'
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешное выполнение
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    example: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /pocket/allow_user:
+    get:
+      summary: Разрешение переводов конкретному пользователю
+      servers:
+        - $ref: '#/servers/0'
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешное выполнение
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    example: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalError'
 
   /k/trade/order_book:
     get:
