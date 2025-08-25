@@ -17,16 +17,11 @@ servers:
       version:
         default: "100"
         description: Версия API (0.1, 0.100, 0.01, 0.001)
-  
-  - url: https://iris-tg.ru
-    description: Публичные методы без аутентификации
 
 paths:
   /pocket/balance:
     get:
       summary: Получение баланса пользователя
-      servers:
-        - $ref: '#/servers/0'
       responses:
         '200':
           description: Успешный запрос
@@ -59,8 +54,6 @@ paths:
   /pocket/sweets/give:
     get:
       summary: Перевод ирисок пользователю
-      servers:
-        - $ref: '#/servers/0'
       parameters:
         - name: user_id
           in: query
@@ -108,8 +101,6 @@ paths:
   /pocket/gold/give:
     get:
       summary: Перевод ирис-голд пользователю
-      servers:
-        - $ref: '#/servers/0'
       parameters:
         - name: user_id
           in: query
@@ -156,8 +147,6 @@ paths:
   /pocket/sweets/history:
     get:
       summary: История операций с ирисками
-      servers:
-        - $ref: '#/servers/0'
       parameters:
         - name: offset
           in: query
@@ -210,8 +199,6 @@ paths:
   /pocket/gold/history:
     get:
       summary: История операций с ирис-голд
-      servers:
-        - $ref: '#/servers/0'
       parameters:
         - name: offset
           in: query
@@ -264,8 +251,6 @@ paths:
   /pocket/enable:
     get:
       summary: Включение видимости мешка
-      servers:
-        - $ref: '#/servers/0'
       responses:
         '200':
           description: Успешное выполнение
@@ -291,8 +276,6 @@ paths:
   /pocket/disable:
     get:
       summary: Отключение видимости мешка
-      servers:
-        - $ref: '#/servers/0'
       responses:
         '200':
           description: Успешное выполнение
@@ -318,8 +301,6 @@ paths:
   /pocket/allow_all:
     get:
       summary: Разрешение переводов всем пользователям
-      servers:
-        - $ref: '#/servers/0'
       responses:
         '200':
           description: Успешное выполнение
@@ -345,8 +326,6 @@ paths:
   /pocket/deny_all:
     get:
       summary: Запрет переводов всем пользователям
-      servers:
-        - $ref: '#/servers/0'
       responses:
         '200':
           description: Успешное выполнение
@@ -372,8 +351,6 @@ paths:
   /pocket/deny_user:
     get:
       summary: Запрет переводов конкретному пользователю
-      servers:
-        - $ref: '#/servers/0'
       parameters:
         - name: user_id
           in: query
@@ -405,8 +382,6 @@ paths:
   /pocket/allow_user:
     get:
       summary: Разрешение переводов конкретному пользователю
-      servers:
-        - $ref: '#/servers/0'
       parameters:
         - name: user_id
           in: query
@@ -439,7 +414,7 @@ paths:
     get:
       summary: Получение стакана торгов
       servers:
-        - $ref: '#/servers/1'
+        - url: https://iris-tg.ru
       responses:
         '200':
           description: Успешный запрос
@@ -481,7 +456,7 @@ paths:
     get:
       summary: Получение информации о сделках
       servers:
-        - $ref: '#/servers/1'
+        - url: https://iris-tg.ru
       parameters:
         - name: id
           in: query
